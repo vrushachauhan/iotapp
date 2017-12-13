@@ -1,74 +1,136 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Serial Connect</title>
+    
+    
+    <title>StepCount</title>
+    <!-- //Google Font// -->
+    <link href="https://fonts.googleapis.com/css?family=Nunito:600,600i,700,800" rel="stylesheet">
+
+    <link rel="stylesheet" url="css/style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.1/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="js/smoothie.js"></script>
 
+<style>
+* {
+    font-family: 'Nunito', sans-serif;
+}
+
+body {
+    margin: 0;
+}
+#incoming {
+    color:#30C4C9;
+    text-align: center;
+    font-size: 32px;
+    display: hide;
+    
+}
+
+h2 {
+    text-align: center;
+    background-color:#30C4C9;
+    color: white; 
+    padding:1em;
+    letter-spacing: 5px;
+    font-size: 25px;
+    margin: 0;
+}
+
+h3, p {
+    text-align: center;
+}
+
+#circle {
+
+    width: 150px;
+    height: 150px;
+    background: #eaeaea;
+    -webkit-border-radius: 80px;
+    border: solid #30C4C9 3px;
+    box-shadow: 3px 5px 18px #c3c3c3;
+}
+
+img {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    color: white;
+    right:57%;
+    top:2%;
+
+}
+
+p#value {
+    color:#30C4C9;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    padding-top: 0.7em;
+
+}
+</style>
 
     <script>
         var val;
         //vars to stopre the timeplots
         var plotX = new TimeSeries();
         var plotY = new TimeSeries();
-        var button = new TimeSeries();
+        var plotZ = new TimeSeries();
+        var res;
         //set up websocket connection
         var socket = io.connect('//localhost:3000');
         socket.on('data', function(data) {
-            console.log(data);
+            // console.log(data);
+
             $('#incoming').text(data);
+            
             //split incoming data to array and connect it to timeplot elements
-            var res = data.split(",");
+            res = data.split(",");
             plotX.append(new Date().getTime(), res[0]);
             plotY.append(new Date().getTime(), res[1]);
-            plotZ.append(new Date().getTime(), res[2]);
+            plotZ.append(new Date().getTime(), res[2])
+            $('#x').text(res[0]);;
+            $('#y').text(res[1]);
+            $('#z').text(res[2]);
+                    var sum = parseFloat(res[0]) + parseFloat(res[1]) + parseFloat(res[2]);
+        $('#value').text(sum.toPrecision(3));
+        console.log(sum);
+    
+
         });
+
+
+
+
         socket.on('error', function() {
             console.error(arguments)
         });
-        //style chart and bind elements to it
-        function createTimeline() {
-            var potChart = new SmoothieChart({
-                grid: {
-                    strokeStyle: 'rgb(125, 0, 0)',
-                    fillStyle: 'rgb(60, 0, 0)',
-                    lineWidth: 1,
-                    millisPerLine: 250,
-                    verticalSections: 6,
-                },
-                labels: {
-                    fillStyle: 'rgb(255, 0, 0)'
-                },
-                millisPerPixel: 10
-            });
-            potChart.addTimeSeries(plotX, {
-                strokeStyle: 'rgb(0, 255, 0)',
-                fillStyle: 'rgba(0, 255, 0, 0.4)',
-                lineWidth: 3
-            });
-            potChart.addTimeSeries(plotY, {
-                strokeStyle: 'rgb(255, 0, 255)',
-                fillStyle: 'rgba(255, 0, 255, 0.3)',
-                lineWidth: 3
-            });
-            potChart.addTimeSeries(plotZ, {
-                strokeStyle: 'rgb(0, 0, 255)',
-                fillStyle: 'rgba(0, 0, 255, 0.3)',
-                lineWidth: 3
-            });
-            potChart.streamTo(document.getElementById("chart"), 500);
-
-
+        
     </script>
 </head>
 
-<body onload="createTimeline()">
-    <canvas id="chart" width="800" height="300"></canvas>
-    <canvas id="chart1" width="800" height="300"></canvas>
-    <h1 id="incoming"></h1>
-    <div id="chart"></div>
+<body>
+   
+    <header>
+       <img src="/logo.svg">
+        <h2>StepCount</h2>
+    </header>
+    <h3>Total Steps</h3>
+        <p>(Walking + Running)</p>
+            <center><div id="circle">
+            <p id="value"></p>
+            </div></center>
+    
+    <!-- <h1 id="incoming"></h1> -->
+    <!-- <div id="chart"></div>
+    <h1 id="x"></h1>
+    <h1 id="y"></h1>
+    <h1 id="z"></h1> -->
 </body>
 
 </html>
