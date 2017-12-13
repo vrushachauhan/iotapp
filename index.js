@@ -5,7 +5,7 @@ var path = require("path");
 const io = require("socket.io")(server);
 const SerialPort = require("serialport");
 const Readline = SerialPort.parsers.Readline;
-const port = new SerialPort("/dev/tty.usbmodem1411", {
+const port = new SerialPort("/dev/tty.usbmodem1421", {
     baudRate: 9600
 });
 
